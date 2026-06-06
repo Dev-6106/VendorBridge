@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@erpro.com",
+    "password": "admin123",
+    "role": "Administrator",
+    "department": "Procurement",
+    "avatar": "https://i.pravatar.cc/100?img=47",
+    "createdAt": "2024-01-15T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Ravi Sharma",
+    "email": "emp@erpro.com",
+    "password": "emp123",
+    "role": "Procurement Officer",
+    "department": "Procurement",
+    "avatar": "https://i.pravatar.cc/100?img=12",
+    "createdAt": "2024-02-10T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Priya Patel",
+    "email": "priya@erpro.com",
+    "password": "priya123",
+    "role": "Finance Manager",
+    "department": "Finance",
+    "avatar": "https://i.pravatar.cc/100?img=25",
+    "createdAt": "2024-03-05T09:00:00Z"
+  }
+]
