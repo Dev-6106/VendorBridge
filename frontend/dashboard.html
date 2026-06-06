@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERP Pro — Dashboard</title>
+  <meta name="description" content="ERP Pro Procurement Dashboard — Odoo × KSV" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">⚡</div>
+        <div>
+          <div class="sidebar-logo-text">ERP Pro</div>
+          <div class="sidebar-logo-sub">Procurement Suite</div>
+        </div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-section">
+        <div class="nav-section-label">Overview</div>
+        <div class="nav-item active" data-page="home"><span class="nav-icon">📊</span><span>Dashboard</span></div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Procurement</div>
+        <div class="nav-item" data-page="vendors"><span class="nav-icon">🏢</span><span>Vendor Management</span></div>
+        <div class="nav-item" data-page="rfq"><span class="nav-icon">📋</span><span>RFQ Management</span><span class="nav-badge" id="rfqBadge">0</span></div>
+        <div class="nav-item" data-page="quotations"><span class="nav-icon">💬</span><span>Quotations</span></div>
+        <div class="nav-item" data-page="comparison"><span class="nav-icon">⚖️</span><span>Quote Comparison</span></div>
+        <div class="nav-item" data-page="approvals"><span class="nav-icon">✅</span><span>Approvals</span><span class="nav-badge" id="approvalBadge">0</span></div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Finance</div>
+        <div class="nav-item" data-page="po-invoice"><span class="nav-icon">🛒</span><span>PO &amp; Invoices</span></div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Insights</div>
+        <div class="nav-item" data-page="activity"><span class="nav-icon">🔔</span><span>Activity &amp; Logs</span></div>
+        <div class="nav-item" data-page="reports"><span class="nav-icon">📈</span><span>Reports</span></div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <img class="user-avatar" id="sidebarAvatar" src="https://i.pravatar.cc/100?img=47" alt="avatar" />
+      <div>
+        <div class="user-mini-name" id="sidebarName">—</div>
+        <div class="user-mini-role" id="sidebarRole">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════ MAIN AREA ══════════ -->
+  <div class="main-area">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="liveClock">—</p>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <span>🔍</span>
+          <input type="text" id="globalSearch" placeholder="Search vendors, RFQs, POs…" />
+        </div>
+        <div class="notif-btn" id="notifBtn" title="Notifications">
+          🔔<span class="notif-dot" id="notifDot"></span>
+        </div>
+        <div class="topbar-profile">
+          <img class="topbar-avatar" id="topbarAvatar" src="https://i.pravatar.cc/100?img=47" alt="profile" />
+          <div>
+            <div class="topbar-name" id="topbarName">—</div>
+            <div class="topbar-role" id="topbarRole">—</div>
+          </div>
+        </div>
+        <button class="btn-logout" id="logoutBtn">🚪 Logout</button>
+      </div>
+    </header>
+
+    <!-- ══════════ PAGE SECTIONS ══════════ -->
+    <main class="dashboard-content">
+
+      <!-- ─────── SCREEN 2: DASHBOARD HOME ─────── -->
+      <section class="page active" id="page-home">
+        <div class="stats-grid" id="homeStats"></div>
+        <div class="quick-actions">
+          <button class="qa-btn" onclick="navigateTo('rfq');showRFQForm()">📋 Create RFQ</button>
+          <button class="qa-btn" onclick="navigateTo('vendors');showVendorModal()">🏢 Add Vendor</button>
+          <button class="qa-btn" onclick="navigateTo('approvals')">✅ View Approvals</button>
+          <button class="qa-btn" onclick="navigateTo('reports')">📈 Analytics</button>
+        </div>
+        <div class="two-col">
+          <div class="section-card">
+            <div class="section-head"><h3>📋 Recent RFQs</h3><button class="btn btn-outline btn-sm" onclick="navigateTo('rfq')">View All</button></div>
+            <div class="section-body" id="homeRFQs"></div>
+          </div>
+          <div class="section-card">
+            <div class="section-head"><h3>✅ Pending Approvals</h3><button class="btn btn-outline btn-sm" onclick="navigateTo('approvals')">View All</button></div>
+            <div class="section-body" id="homePendingApprovals"></div>
+          </div>
+        </div>
+        <div class="section-card" style="margin-top:1.5rem;">
+          <div class="section-head"><h3>🛒 Recent Purchase Orders</h3><button class="btn btn-outline btn-sm" onclick="navigateTo('po-invoice')">View All</button></div>
+          <div class="section-body" id="homePOs"></div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 3: VENDOR MANAGEMENT ─────── -->
+      <section class="page" id="page-vendors">
+        <div class="page-toolbar">
+          <div class="search-filter">
+            <input type="text" class="search-inp" id="vendorSearch" placeholder="🔍 Search vendors…" oninput="renderVendors()" />
+            <select class="filter-sel" id="vendorCatFilter" onchange="renderVendors()">
+              <option value="">All Categories</option>
+              <option>IT Equipment</option><option>Office Materials</option>
+              <option>Manufacturing</option><option>Infrastructure</option>
+              <option>Logistics</option><option>Other</option>
+            </select>
+            <select class="filter-sel" id="vendorStatusFilter" onchange="renderVendors()">
+              <option value="">All Status</option>
+              <option>Active</option><option>Pending</option><option>Suspended</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="showVendorModal()">+ Add Vendor</button>
+        </div>
+        <div class="section-card">
+          <div class="section-body" id="vendorTableContainer"></div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 4: RFQ MANAGEMENT ─────── -->
+      <section class="page" id="page-rfq">
+        <div id="rfq-list-view">
+          <div class="page-toolbar">
+            <div class="search-filter">
+              <input type="text" class="search-inp" id="rfqSearch" placeholder="🔍 Search RFQs…" oninput="renderRFQs()" />
+              <select class="filter-sel" id="rfqStatusFilter" onchange="renderRFQs()">
+                <option value="">All Status</option>
+                <option>Open</option><option>Quoted</option><option>Under Review</option><option>Awarded</option><option>Closed</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="showRFQForm()">+ Create RFQ</button>
+          </div>
+          <div class="section-card">
+            <div class="section-body" id="rfqTableContainer"></div>
+          </div>
+        </div>
+        <div id="rfq-form-view" class="hidden">
+          <div class="section-card form-card">
+            <div class="section-head">
+              <h3>📋 Create New RFQ</h3>
+              <button class="btn btn-outline" onclick="hideRFQForm()">← Back</button>
+            </div>
+            <div class="form-body">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>RFQ Title *</label>
+                  <input type="text" id="rfqTitle" class="form-inp" placeholder="e.g. Laptop Procurement Q3" />
+                </div>
+                <div class="form-group">
+                  <label>Category *</label>
+                  <select id="rfqCategory" class="form-inp">
+                    <option value="">Select category</option>
+                    <option>IT Equipment</option><option>Office Materials</option>
+                    <option>Manufacturing</option><option>Infrastructure</option>
+                    <option>Logistics</option><option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="rfqDesc" class="form-inp" rows="2" placeholder="Brief description…"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Products / Services *</label>
+                <div id="rfqItems">
+                  <div class="item-row">
+                    <input type="text" class="form-inp" placeholder="Item name" name="itemName" />
+                    <input type="number" class="form-inp w-20" placeholder="Qty" name="itemQty" min="1" />
+                    <select class="form-inp w-20" name="itemUnit"><option>Pcs</option><option>Meters</option><option>Kg</option><option>Liters</option><option>Box</option></select>
+                    <button class="btn-icon-del" onclick="removeItemRow(this)">🗑️</button>
+                  </div>
+                </div>
+                <button class="btn btn-outline btn-sm" style="margin-top:.5rem;" onclick="addItemRow()">+ Add Item</button>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Submission Deadline *</label>
+                  <input type="date" id="rfqDeadline" class="form-inp" />
+                </div>
+                <div class="form-group">
+                  <label>Assign Vendors</label>
+                  <div id="rfqVendorCheckboxes" class="checkbox-group"></div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Attachments</label>
+                <input type="file" id="rfqAttachment" class="form-inp" multiple />
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-outline" onclick="hideRFQForm()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitRFQ()">📤 Submit RFQ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 5: QUOTATION SUBMISSION ─────── -->
+      <section class="page" id="page-quotations">
+        <div id="qt-list-view">
+          <div class="page-toolbar">
+            <select class="filter-sel" id="qtRFQFilter" onchange="renderQuotationList()">
+              <option value="">All RFQs</option>
+            </select>
+            <button class="btn btn-primary" onclick="showQuotationForm()">+ Submit Quotation</button>
+          </div>
+          <div class="section-card">
+            <div class="section-body" id="qtTableContainer"></div>
+          </div>
+        </div>
+        <div id="qt-form-view" class="hidden">
+          <div class="section-card form-card">
+            <div class="section-head">
+              <h3>💬 Submit Quotation</h3>
+              <button class="btn btn-outline" onclick="hideQuotationForm()">← Back</button>
+            </div>
+            <div class="form-body">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Select RFQ *</label>
+                  <select id="qtRFQSelect" class="form-inp" onchange="loadRFQItems()">
+                    <option value="">Choose RFQ…</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Vendor *</label>
+                  <select id="qtVendorSelect" class="form-inp">
+                    <option value="">Choose Vendor…</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" id="qtItemsGroup" style="display:none;">
+                <label>Pricing Details *</label>
+                <table class="data-table">
+                  <thead><tr><th>Item</th><th>Qty</th><th>Unit Price (₹)</th><th>Total (₹)</th></tr></thead>
+                  <tbody id="qtItemsBody"></tbody>
+                </table>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>Delivery Timeline (days) *</label>
+                  <input type="number" id="qtDelivery" class="form-inp" placeholder="e.g. 14" min="1" />
+                </div>
+                <div class="form-group">
+                  <label>GST %</label>
+                  <select id="qtGST" class="form-inp">
+                    <option value="5">5%</option><option value="12">12%</option>
+                    <option value="18" selected>18%</option><option value="28">28%</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Notes / Comments</label>
+                <textarea id="qtNotes" class="form-inp" rows="3" placeholder="Warranty info, delivery terms, etc."></textarea>
+              </div>
+              <div class="totals-box" id="qtTotals" style="display:none;"></div>
+              <div class="form-actions">
+                <button class="btn btn-outline" onclick="hideQuotationForm()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitQuotation()">📤 Submit Quotation</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 6: QUOTATION COMPARISON ─────── -->
+      <section class="page" id="page-comparison">
+        <div class="section-card">
+          <div class="section-head">
+            <h3>⚖️ Quotation Comparison</h3>
+            <div style="display:flex;gap:.75rem;align-items:center;">
+              <select class="filter-sel" id="compRFQSelect" onchange="renderComparison()">
+                <option value="">Select RFQ…</option>
+              </select>
+              <select class="filter-sel" id="compSort" onchange="renderComparison()">
+                <option value="price">Sort: Lowest Price</option>
+                <option value="delivery">Sort: Fastest Delivery</option>
+                <option value="rating">Sort: Best Rating</option>
+              </select>
+            </div>
+          </div>
+          <div id="comparisonContainer" class="comparison-body">
+            <div class="empty-state">Select an RFQ to compare quotations.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 7: APPROVAL WORKFLOW ─────── -->
+      <section class="page" id="page-approvals">
+        <div class="page-toolbar">
+          <select class="filter-sel" id="approvalFilter" onchange="renderApprovals()">
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <button class="btn btn-primary" onclick="showNewApprovalModal()">+ New Request</button>
+        </div>
+        <div style="display:none;"><!-- filter moved to inline above -->
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div id="approvalsContainer"></div>
+      </section>
+
+      <!-- ─────── SCREEN 8: PO & INVOICE ─────── -->
+      <section class="page" id="page-po-invoice">
+        <div class="page-toolbar">
+          <div class="search-filter">
+            <input type="text" class="search-inp" id="poSearch" placeholder="🔍 Search PO / Invoice…" oninput="renderPOList()" />
+            <select class="filter-sel" id="poStatusFilter" onchange="renderPOList()">
+              <option value="">All Status</option>
+              <option>Draft</option><option>Issued</option><option>Delivered</option><option>Paid</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="showGeneratePO()">+ Generate PO</button>
+        </div>
+        <div id="po-list-view">
+          <div class="section-card">
+            <div class="section-body" id="poTableContainer"></div>
+          </div>
+        </div>
+        <div id="po-detail-view" class="hidden">
+          <div class="section-card form-card" id="poDetailCard"><!-- rendered by JS --></div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 9: ACTIVITY LOGS ─────── -->
+      <section class="page" id="page-activity">
+        <div class="page-toolbar">
+          <select class="filter-sel" id="activityTypeFilter" onchange="renderActivity()">
+            <option value="">All Types</option>
+            <option value="RFQ">RFQ</option><option value="Quotation">Quotation</option>
+            <option value="Approval">Approval</option><option value="PO">Purchase Order</option>
+            <option value="Invoice">Invoice</option><option value="Vendor">Vendor</option>
+          </select>
+          <input type="date" id="activityDateFilter" class="filter-sel" onchange="renderActivity()" />
+        </div>
+        <div class="two-col">
+          <div class="section-card" style="flex:1.5;">
+            <div class="section-head"><h3>📋 Activity Timeline</h3></div>
+            <div class="activity-timeline" id="activityTimeline"></div>
+          </div>
+          <div class="section-card" style="flex:1;">
+            <div class="section-head"><h3>🔔 Notifications</h3></div>
+            <div id="notificationsPanel" class="notif-panel"></div>
+          </div>
+        </div>
+        <div class="section-card" style="margin-top:1.5rem;">
+          <div class="section-head"><h3>📊 Audit Log</h3></div>
+          <div class="section-body" id="auditLogContainer"></div>
+        </div>
+      </section>
+
+      <!-- ─────── SCREEN 10: REPORTS & ANALYTICS ─────── -->
+      <section class="page" id="page-reports">
+        <div class="stats-grid" id="reportStats"></div>
+        <div class="two-col" style="margin-top:1.5rem;">
+          <div class="section-card">
+            <div class="section-head">
+              <h3>📊 Monthly Spending</h3>
+              <button class="btn btn-outline btn-sm" onclick="exportChart('monthlyChart','monthly_spending')">⬇️ Export</button>
+            </div>
+            <div style="padding:1rem;"><canvas id="monthlyChart" height="200"></canvas></div>
+          </div>
+          <div class="section-card">
+            <div class="section-head">
+              <h3>🥧 Spending by Category</h3>
+              <button class="btn btn-outline btn-sm" onclick="exportChart('categoryChart','category_spend')">⬇️ Export</button>
+            </div>
+            <div style="padding:1rem;"><canvas id="categoryChart" height="200"></canvas></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:1.5rem;">
+          <div class="section-card">
+            <div class="section-head">
+              <h3>🏢 Vendor Performance</h3>
+              <button class="btn btn-outline btn-sm" onclick="exportChart('vendorChart','vendor_perf')">⬇️ Export</button>
+            </div>
+            <div style="padding:1rem;"><canvas id="vendorChart" height="220"></canvas></div>
+          </div>
+          <div class="section-card">
+            <div class="section-head"><h3>📋 Procurement Summary</h3></div>
+            <div class="section-body" id="procSummary"></div>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /dashboard-content -->
+  </div><!-- /main-area -->
+</div><!-- /app-shell -->
+
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-head" id="modalHead"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ══════════ TOAST ══════════ -->
+<div id="toastContainer"></div>
+
+<script src="js/store.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/vendors.js"></script>
+  <script src="js/rfq.js"></script>
+  <script src="js/quotations.js"></script>
+  <script src="js/approvals.js"></script>
+  <script src="js/po-invoice.js"></script>
+  <script src="js/activity-reports.js"></script>
+</body>
+</html>
