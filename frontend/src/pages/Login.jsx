@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState('login');
@@ -16,6 +17,54 @@ export default function Login() {
   const [success, setSuccess] = useState('');
   const { login, signup } = useAuth();
   const navigate = useNavigate();
+
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [forgotStep, setForgotStep] = useState(1);
+  const [simulatedCode, setSimulatedCode] = useState('');
+
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    try {
+      const res = await axios.post('http://localhost:3000/api/forgot-password', { email: forgotEmail });
+      if (res.data.success) {
+        setSimulatedCode(res.data.code);
+        setForgotStep(2);
+        setSuccess(`Code generated (simulated): ${res.data.code}. Please enter it below.`);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to send reset code');
+    }
+  };
+
+  const handleResetSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    try {
+      const res = await axios.post('http://localhost:3000/api/reset-password', {
+        email: forgotEmail,
+        code: resetCode,
+        newPassword
+      });
+      if (res.data.success) {
+        setSuccess('Password reset successfully! You can now sign in.');
+        setShowForgotModal(false);
+        setForgotEmail('');
+        setResetCode('');
+        setNewPassword('');
+        setForgotStep(1);
+        setSimulatedCode('');
+        setActiveTab('login');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to reset password');
+    }
+  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -136,7 +185,7 @@ export default function Login() {
                       <input type="checkbox" />
                       <span className="checkmark"></span>Remember me
                     </label>
-                    <a href="#" className="forgot-link" onClick={e => e.preventDefault()}>Forgot password?</a>
+                    <a href="#" className="forgot-link" onClick={e => { e.preventDefault(); setShowForgotModal(true); setForgotStep(1); setError(''); setSuccess(''); }}>Forgot password?</a>
                   </div>
                   <button type="submit" className="btn-login">
                     <span className="btn-text">Sign In</span>
@@ -242,6 +291,67 @@ export default function Login() {
           </div>
         </div>
       </div>
+
+      {showForgotModal && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowForgotModal(false)}>
+          <div className="modal-box" style={{ maxWidth: '400px' }}>
+            <div className="modal-header">
+              <h3>🔒 Forgot Password</h3>
+              <button className="modal-close" onClick={() => setShowForgotModal(false)}>✕</button>
+            </div>
+            {error && <div className="alert alert-error" style={{ marginBottom: '1rem' }}><span>⚠️</span><span>{error}</span></div>}
+            {success && <div className="alert alert-success" style={{ marginBottom: '1rem' }}><span>✅</span><span>{success}</span></div>}
+            
+            {forgotStep === 1 ? (
+              <form className="modal-form" onSubmit={handleForgotSubmit}>
+                <div className="form-group">
+                  <label>Enter your Email Address</label>
+                  <input 
+                    className="modal-inp" 
+                    type="email" 
+                    value={forgotEmail} 
+                    onChange={e => setForgotEmail(e.target.value)} 
+                    placeholder="e.g. employee@company.com" 
+                    required 
+                  />
+                </div>
+                <div className="modal-footer" style={{ marginTop: '1rem' }}>
+                  <button type="button" className="btn btn-outline" onClick={() => setShowForgotModal(false)}>Cancel</button>
+                  <button type="submit" className="btn btn-primary">Send Code</button>
+                </div>
+              </form>
+            ) : (
+              <form className="modal-form" onSubmit={handleResetSubmit}>
+                <div className="form-group">
+                  <label>Enter 6-Digit Code</label>
+                  <input 
+                    className="modal-inp" 
+                    value={resetCode} 
+                    onChange={e => setResetCode(e.target.value)} 
+                    placeholder="123456" 
+                    required 
+                  />
+                </div>
+                <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                  <label>New Password</label>
+                  <input 
+                    className="modal-inp" 
+                    type="password" 
+                    value={newPassword} 
+                    onChange={e => setNewPassword(e.target.value)} 
+                    placeholder="Enter new password" 
+                    required 
+                  />
+                </div>
+                <div className="modal-footer" style={{ marginTop: '1rem' }}>
+                  <button type="button" className="btn btn-outline" onClick={() => setForgotStep(1)}>Back</button>
+                  <button type="submit" className="btn btn-primary">Reset Password</button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

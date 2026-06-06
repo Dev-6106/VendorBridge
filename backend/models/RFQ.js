@@ -13,6 +13,7 @@ const rfqSchema = new mongoose.Schema({
   deadline: { type: String },
   status: { type: String, default: 'Open' },
   assignedVendors: [String],
+  attachments: { type: [String], default: [] },
   createdBy: { type: String },
   createdAt: { type: String }
 });

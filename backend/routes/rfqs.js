@@ -1,12 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const RFQ = require('../models/RFQ');
+const Vendor = require('../models/Vendor');
 const Activity = require('../models/Activity');
 const requireAuth = require('../utils/authMiddleware');
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const rfqs = await RFQ.find().sort({ createdAt: -1 });
+    let query = {};
+    if (req.user.role === 'Vendor') {
+      const vendor = await Vendor.findOne({ email: new RegExp('^' + req.user.email + '$', 'i') });
+      if (!vendor) {
+        return res.json({ success: true, rfqs: [] });
+      }
+      query.assignedVendors = vendor.id;
+    }
+    const rfqs = await RFQ.find(query).sort({ createdAt: -1 });
     res.json({ success: true, rfqs });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -20,9 +29,16 @@ router.post('/', requireAuth, async (req, res) => {
     
     const newRfq = new RFQ({
       id,
-      ...req.body,
+      title: req.body.title,
+      category: req.body.category,
+      description: req.body.description,
+      items: req.body.items || [],
+      deadline: req.body.deadline,
+      assignedVendors: req.body.assignedVendors || [],
+      attachments: req.body.attachments || [],
       status: 'Open',
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split('T')[0],
+      createdBy: req.user.name || req.user.email || 'System'
     });
     
     await newRfq.save();

@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const PO = require('../models/PO');
+const Vendor = require('../models/Vendor');
 const Activity = require('../models/Activity');
 const requireAuth = require('../utils/authMiddleware');
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const pos = await PO.find().sort({ issuedDate: -1 });
+    let query = {};
+    if (req.user.role === 'Vendor') {
+      const vendor = await Vendor.findOne({ email: new RegExp('^' + req.user.email + '$', 'i') });
+      if (!vendor) return res.json({ success: true, pos: [] });
+      query.vendorId = vendor.id;
+    }
+    const pos = await PO.find(query).sort({ issuedDate: -1 });
     res.json({ success: true, pos });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -52,6 +59,17 @@ router.patch('/:id/invoice', requireAuth, async (req, res) => {
       { new: true }
     );
     if (!po) return res.status(404).json({ success: false, message: 'PO not found.' });
+
+    const actCount = await Activity.countDocuments();
+    await new Activity({
+      id: `ACT-${String(actCount + 1).padStart(3, '0')}`,
+      type: 'PO',
+      icon: '🧾',
+      text: `Invoice generated for Purchase Order ${po.id}.`,
+      timestamp: new Date().toISOString(),
+      user: req.user.email || 'System'
+    }).save();
+
     res.json({ success: true, po });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

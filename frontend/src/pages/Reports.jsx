@@ -119,6 +119,71 @@ export default function Reports() {
     ? Math.round((data.approvals.filter(a => a.status === 'Approved').length / data.approvals.length) * 100)
     : 0;
 
+  // CSV Export utility
+  const exportToCSV = (dataType) => {
+    let headers = [];
+    let rows = [];
+    let filename = '';
+
+    if (dataType === 'spend') {
+      headers = ['PO ID', 'Vendor ID', 'Vendor Name', 'RFQ Reference', 'Subtotal (INR)', 'GST Amount (INR)', 'Grand Total (INR)', 'Issued Date', 'Status'];
+      rows = data.pos.map(p => [
+        p.id,
+        p.vendorId || '',
+        p.vendorName || '',
+        p.rfqId || '',
+        p.subTotal || 0,
+        p.gstAmount || 0,
+        p.grandTotal || 0,
+        p.issuedDate || '',
+        p.status || ''
+      ]);
+      filename = `Spend_Report_${new Date().toISOString().split('T')[0]}.csv`;
+    } else if (dataType === 'vendors') {
+      headers = ['Vendor ID', 'Name', 'Category', 'GST IN', 'Email', 'Phone', 'Rating', 'Status', 'Registered Date'];
+      rows = data.vendors.map(v => [
+        v.id,
+        v.name || '',
+        v.category || '',
+        v.gst || '',
+        v.email || '',
+        v.phone || '',
+        v.rating || 0,
+        v.status || '',
+        v.addedDate || ''
+      ]);
+      filename = `Vendors_Report_${new Date().toISOString().split('T')[0]}.csv`;
+    } else if (dataType === 'rfqs') {
+      headers = ['RFQ ID', 'Title', 'Category', 'Deadline', 'Status', 'Items Count', 'Assigned Vendors Count', 'Created By'];
+      rows = data.rfqs.map(r => [
+        r.id,
+        r.title || '',
+        r.category || '',
+        r.deadline || '',
+        r.status || '',
+        r.items?.length || 0,
+        r.assignedVendors?.length || 0,
+        r.createdBy || ''
+      ]);
+      filename = `RFQs_Report_${new Date().toISOString().split('T')[0]}.csv`;
+    }
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(','), ...rows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))].join('\n');
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handlePrintPDF = () => {
+    window.print();
+  };
+
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '3rem' }}>
       <div className="loading-spinner"></div>
@@ -127,6 +192,25 @@ export default function Reports() {
 
   return (
     <section className="page" id="page-reports">
+      {/* Export Toolbar */}
+      <div className="page-toolbar" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-start', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '1.25rem' }}>
+        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--gray-400)', alignSelf: 'center', marginRight: '0.5rem' }}>
+          📥 Export Reports:
+        </span>
+        <button className="btn btn-outline btn-sm" onClick={() => exportToCSV('spend')}>
+          📊 Spend Data (CSV)
+        </button>
+        <button className="btn btn-outline btn-sm" onClick={() => exportToCSV('vendors')}>
+          🏢 Vendors Registry (CSV)
+        </button>
+        <button className="btn btn-outline btn-sm" onClick={() => exportToCSV('rfqs')}>
+          📋 RFQs Log (CSV)
+        </button>
+        <button className="btn btn-primary btn-sm" onClick={handlePrintPDF} style={{ marginLeft: 'auto' }}>
+          🖨️ Print PDF Summary
+        </button>
+      </div>
+
       {/* KPI Summary */}
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '1.5rem' }}>
         <div className="stat-card"><div className="stat-icon">💰</div><div className="stat-info"><div className="stat-val">₹{(totalSpend/100000).toFixed(1)}L</div><div className="stat-label">Total Spend</div></div></div>
@@ -136,32 +220,32 @@ export default function Reports() {
       </div>
 
       {/* Charts Row 1 */}
-      <div className="charts-grid" style={{ marginBottom: '1rem' }}>
-        <div className="chart-card">
-          <div className="chart-title">📋 RFQ Status Distribution</div>
-          <canvas ref={rfqStatusRef} height="220"></canvas>
+      <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
+        <div className="chart-card" style={{ background: 'var(--gray-900)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div className="chart-title" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-400)', marginBottom: '1rem' }}>📋 RFQ Status Distribution</div>
+          <canvas ref={rfqStatusRef} height="200"></canvas>
         </div>
-        <div className="chart-card">
-          <div className="chart-title">✅ Approval Status</div>
-          <canvas ref={approvalRef} height="220"></canvas>
+        <div className="chart-card" style={{ background: 'var(--gray-900)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div className="chart-title" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-400)', marginBottom: '1rem' }}>✅ Approval Status</div>
+          <canvas ref={approvalRef} height="200"></canvas>
         </div>
       </div>
 
       {/* Charts Row 2 */}
-      <div className="charts-grid" style={{ marginBottom: '1rem' }}>
-        <div className="chart-card" style={{ gridColumn: '1 / -1' }}>
-          <div className="chart-title">📈 Monthly Procurement Spend</div>
-          <canvas ref={monthlyPoRef} height="120"></canvas>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
+        <div className="chart-card" style={{ background: 'var(--gray-900)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '1.25rem' }}>
+          <div className="chart-title" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-400)', marginBottom: '1rem' }}>📈 Monthly Procurement Spend</div>
+          <canvas ref={monthlyPoRef} height="100"></canvas>
         </div>
       </div>
 
-      <div className="chart-card">
-        <div className="chart-title">🏢 Vendors by Category</div>
-        <canvas ref={categoryRef} height="130"></canvas>
+      <div className="chart-card" style={{ background: 'var(--gray-900)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.25rem' }}>
+        <div className="chart-title" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--gray-400)', marginBottom: '1rem' }}>🏢 Vendors by Category</div>
+        <canvas ref={categoryRef} height="100"></canvas>
       </div>
 
       {/* Vendor Rating Table */}
-      <div className="section-card" style={{ marginTop: '1rem' }}>
+      <div className="section-card">
         <div className="section-head">
           <h3>⭐ Top Rated Vendors</h3>
         </div>
@@ -175,8 +259,8 @@ export default function Reports() {
                   <td><span className="chip">{v.category}</span></td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <div className="progress-bar-wrap" style={{ width: 80 }}>
-                        <div className="progress-bar-fill" style={{ width: `${(v.rating / 5) * 100}%` }}></div>
+                      <div className="progress-bar-wrap" style={{ width: 80, height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' }}>
+                        <div className="progress-bar-fill" style={{ height: '100%', background: 'var(--warning)', width: `${(v.rating / 5) * 100}%` }}></div>
                       </div>
                       <span style={{ color: 'var(--warning)', fontWeight: 600, fontSize: '0.82rem' }}>{v.rating}</span>
                     </div>

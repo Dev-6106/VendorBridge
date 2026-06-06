@@ -1,21 +1,17 @@
 /**
  * ERP Pro — Express Backend Server
  * Procurement & Vendor Management API
- * Odoo × KSV Hackathon
  */
 
 const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
-<<<<<<< HEAD
 const mongoose = require('mongoose');
 
 // Connect to MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/vendorbridge')
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
-=======
->>>>>>> 56954eb0e3c6f3c3c828cf0cb33267abbccc42de
 
 const authRoutes = require('./routes/auth');
 
@@ -24,11 +20,7 @@ const PORT = process.env.PORT || 3000;
 
 /* ── Middleware ── */
 app.use(cors({
-<<<<<<< HEAD
   origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:5173', 'http://127.0.0.1:5173'],
-=======
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'null', '*'],
->>>>>>> 56954eb0e3c6f3c3c828cf0cb33267abbccc42de
   credentials: true,
 }));
 
@@ -42,7 +34,6 @@ app.use((req, _res, next) => {
 });
 
 /* ── API Routes ── */
-<<<<<<< HEAD
 const vendorRoutes     = require('./routes/vendors');
 const rfqRoutes        = require('./routes/rfqs');
 const quotationRoutes  = require('./routes/quotations');
@@ -57,9 +48,6 @@ app.use('/api/quotations', quotationRoutes);
 app.use('/api/approvals', approvalRoutes);
 app.use('/api/pos', poRoutes);
 app.use('/api/activities', activityRoutes);
-=======
-app.use('/api', authRoutes);
->>>>>>> 56954eb0e3c6f3c3c828cf0cb33267abbccc42de
 
 /* ── Health check ── */
 app.get('/', (req, res) => {
@@ -68,7 +56,6 @@ app.get('/', (req, res) => {
     message: 'ERP Pro API is running 🚀',
     version: '1.0.0',
     endpoints: {
-<<<<<<< HEAD
       login:      'POST /api/login',
       me:         'GET  /api/me',
       vendors:    'GET  /api/vendors',
@@ -77,12 +64,6 @@ app.get('/', (req, res) => {
       approvals:  'GET  /api/approvals',
       pos:        'GET  /api/pos',
       activities: 'GET  /api/activities'
-=======
-      login:  'POST /api/login',
-      me:     'GET  /api/me',
-      logout: 'POST /api/logout',
-      users:  'GET  /api/users  (admin only)',
->>>>>>> 56954eb0e3c6f3c3c828cf0cb33267abbccc42de
     },
   });
 });
@@ -102,8 +83,4 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, () => {
   console.log(`\n✅ ERP Pro Backend running at http://localhost:${PORT}`);
   console.log(`   Health check: http://localhost:${PORT}/`);
-<<<<<<< HEAD
-=======
-  console.log(`   Login API:    POST http://localhost:${PORT}/api/login\n`);
->>>>>>> 56954eb0e3c6f3c3c828cf0cb33267abbccc42de
 });
