@@ -1,0 +1,7 @@
+[
+  { "id":"V001", "name":"ABC Technologies", "category":"IT Equipment", "gst":"22AABCT1332L1ZV", "email":"abc@vendor.com", "phone":"9876543210", "status":"Active", "rating":4.8, "addedDate":"2024-01-15" },
+  { "id":"V002", "name":"Global Supplies Co.", "category":"Office Materials", "gst":"27AAACG1234N1Z5", "email":"global@supplier.com", "phone":"9876543211", "status":"Active", "rating":4.2, "addedDate":"2024-02-10" },
+  { "id":"V003", "name":"Prime Industries", "category":"Manufacturing", "gst":"24AAAPI5678M1ZX", "email":"prime@mfg.com", "phone":"9876543212", "status":"Active", "rating":4.6, "addedDate":"2024-02-20" },
+  { "id":"V004", "name":"Nexus Hardware", "category":"Infrastructure", "gst":"09AAACN9012P1ZT", "email":"nexus@hw.com", "phone":"9876543213", "status":"Suspended", "rating":3.9, "addedDate":"2024-03-05" },
+  { "id":"V005", "name":"Swift Logistics", "category":"Logistics", "gst":"33AAACS3456Q1ZR", "email":"swift@logistics.com", "phone":"9876543214", "status":"Active", "rating":4.5, "addedDate":"2024-03-15" }
+]

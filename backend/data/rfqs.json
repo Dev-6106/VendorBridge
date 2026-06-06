@@ -1,0 +1,6 @@
+[
+  { "id":"RFQ-101", "title":"Laptop Procurement Q2", "category":"IT Equipment", "description":"Core i7 laptops for HQ", "items":[{"name":"Dell Laptops i7","qty":50,"unit":"Pcs"}], "deadline":"2025-06-15", "status":"Open", "assignedVendors":["V001","V002"], "createdBy":"Admin User", "createdAt":"2025-06-01" },
+  { "id":"RFQ-102", "title":"Office Printer Supply", "category":"Office Equipment", "description":"Network printers for all floors", "items":[{"name":"HP LaserJet Printers","qty":20,"unit":"Pcs"}], "deadline":"2025-06-18", "status":"Quoted", "assignedVendors":["V001","V003"], "createdBy":"Admin User", "createdAt":"2025-05-28" },
+  { "id":"RFQ-103", "title":"Office Furniture Q2", "category":"Furniture", "description":"Chairs and desks", "items":[{"name":"Executive Chairs","qty":100,"unit":"Pcs"},{"name":"Office Desks","qty":30,"unit":"Pcs"}], "deadline":"2025-06-20", "status":"Under Review", "assignedVendors":["V002","V005"], "createdBy":"Ravi Sharma", "createdAt":"2025-05-25" },
+  { "id":"RFQ-104", "title":"Network Infrastructure", "category":"IT Equipment", "description":"Core networking gear", "items":[{"name":"Cisco Switches","qty":10,"unit":"Pcs"},{"name":"CAT6 Cables","qty":500,"unit":"Meters"}], "deadline":"2025-06-25", "status":"Awarded", "assignedVendors":["V001","V004"], "createdBy":"Admin User", "createdAt":"2025-05-20" }
+]

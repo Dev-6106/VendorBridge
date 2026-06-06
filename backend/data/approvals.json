@@ -1,0 +1,5 @@
+[
+  { "id":"APR-001", "refId":"RFQ-103", "type":"RFQ", "title":"Office Furniture Q2", "amount":814200, "requestedBy":"Ravi Sharma", "department":"Operations", "status":"Pending", "stage":1, "totalStages":3, "stages":["Dept Head","Finance","MD"], "remarks":"", "requestedAt":"2025-05-26" },
+  { "id":"APR-002", "refId":"QT-003", "type":"Quotation", "title":"Printer Quote — ABC Technologies", "amount":354000, "requestedBy":"Admin User", "department":"IT", "status":"Pending", "stage":2, "totalStages":3, "stages":["Dept Head","Finance","MD"], "remarks":"", "requestedAt":"2025-05-30" },
+  { "id":"APR-003", "refId":"RFQ-104", "type":"RFQ", "title":"Network Infrastructure", "amount":180000, "requestedBy":"Admin User", "department":"IT", "status":"Approved", "stage":3, "totalStages":3, "stages":["Dept Head","Finance","MD"], "remarks":"Approved. Proceed with PO.", "requestedAt":"2025-05-20" }
+]

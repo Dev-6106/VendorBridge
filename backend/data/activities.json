@@ -1,0 +1,12 @@
+[
+  { "id":"ACT-001", "type":"Vendor", "icon":"🏢", "text":"Vendor \"ABC Technologies\" registered and marked Active.", "timestamp":"2025-06-01T09:00:00Z", "user":"Admin User" },
+  { "id":"ACT-002", "type":"RFQ", "icon":"📋", "text":"RFQ-101 \"Laptop Procurement Q2\" created.", "timestamp":"2025-06-01T10:30:00Z", "user":"Admin User" },
+  { "id":"ACT-003", "type":"Quotation", "icon":"💬", "text":"Quotation QT-001 submitted by ABC Technologies for RFQ-101.", "timestamp":"2025-06-02T11:00:00Z", "user":"V001" },
+  { "id":"ACT-004", "type":"Quotation", "icon":"💬", "text":"Quotation QT-002 submitted by Global Supplies Co. for RFQ-101.", "timestamp":"2025-06-03T14:20:00Z", "user":"V002" },
+  { "id":"ACT-005", "type":"Approval", "icon":"✅", "text":"Approval APR-003 for Network Infrastructure approved by MD.", "timestamp":"2025-05-22T16:00:00Z", "user":"Admin User" },
+  { "id":"ACT-006", "type":"PO", "icon":"🛒", "text":"Purchase Order PO-2001 issued to ABC Technologies.", "timestamp":"2025-06-01T17:00:00Z", "user":"Admin User" },
+  { "id":"ACT-007", "type":"Invoice", "icon":"🧾", "text":"Invoice generated for PO-2001 (₹1,77,000).", "timestamp":"2025-06-02T09:30:00Z", "user":"Admin User" },
+  { "id":"ACT-008", "type":"RFQ", "icon":"📋", "text":"RFQ-103 \"Office Furniture Q2\" created by Ravi Sharma.", "timestamp":"2025-05-25T10:00:00Z", "user":"Ravi Sharma" },
+  { "id":"ACT-009", "type":"Approval", "icon":"⏳", "text":"Approval APR-001 for Office Furniture submitted for review.", "timestamp":"2025-05-26T11:00:00Z", "user":"Ravi Sharma" },
+  { "id":"ACT-010", "type":"Vendor", "icon":"🏢", "text":"Vendor \"Nexus Hardware\" status changed to Suspended.", "timestamp":"2025-05-28T14:00:00Z", "user":"Admin User" }
+]

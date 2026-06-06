@@ -1,0 +1,4 @@
+[
+  { "id":"PO-2001", "rfqId":"RFQ-104", "rfqTitle":"Network Infrastructure", "vendorId":"V001", "vendorName":"ABC Technologies", "items":[{"name":"Cisco Switches","qty":10,"unitPrice":12500,"total":125000},{"name":"CAT6 Cables","qty":500,"unitPrice":50,"total":25000}], "subTotal":150000, "gstPercent":18, "gstAmount":27000, "grandTotal":177000, "status":"Issued", "issuedDate":"2025-06-01", "deliveryDate":"2025-06-20", "invoiceGenerated":true },
+  { "id":"PO-2002", "rfqId":"RFQ-102", "rfqTitle":"Office Printer Supply", "vendorId":"V003", "vendorName":"Prime Industries", "items":[{"name":"HP LaserJet Printers","qty":20,"unitPrice":14200,"total":284000}], "subTotal":284000, "gstPercent":18, "gstAmount":51120, "grandTotal":335120, "status":"Pending", "issuedDate":"2025-06-03", "deliveryDate":"2025-06-10", "invoiceGenerated":false }
+]
